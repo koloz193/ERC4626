@@ -5,14 +5,14 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import (
-    Uint256, uint256_unsigned_div_rem, uint256_mul, uint256_eq, uint256_add)
+    Uint256, uint256_unsigned_div_rem, uint256_mul, uint256_eq, uint256_add, uint256_sub)
 from openzeppelin.token.erc20.interfaces.IERC20 import IERC20
 from openzeppelin.utils.constants import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_caller_address, get_contract_address
 from openzeppelin.token.erc20.library import (
     ERC20_name, ERC20_symbol, ERC20_totalSupply, ERC20_decimals, ERC20_balanceOf, ERC20_allowance,
     ERC20_initializer, ERC20_approve, ERC20_increaseAllowance, ERC20_decreaseAllowance,
-    ERC20_transfer, ERC20_transferFrom, ERC20_mint, ERC20_burn)
+    ERC20_transfer, ERC20_transferFrom, ERC20_mint, ERC20_burn, ERC20_allowances)
 from starkware.cairo.common.math import assert_not_zero
 
 # ERC4626 Events
@@ -292,10 +292,21 @@ func redeem{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     let (caller) = get_caller_address()
     let (assetAmount) = _convert_to_assets(shareAmount)
     let (asset_addr) = asset_address.read()
-    # ToDo: need to decrease allowance some how. maybe just pull all erc20 in here
+    let (allowance) = ERC20_allowances.read(owner=owner, spender=caller)
+    local pedersen_ptr : HashBuiltin* = pedersen_ptr
     IERC20.transfer(contract_address=asset_addr, recipient=receiver, amount=assetAmount)
     Withdraw.emit(
         withdrawer=caller, receiver=receiver, owner=owner, assets=assetAmount, shares=shareAmount)
+    let res = caller - owner
+    if res != 0:
+        let (newAllowance : Uint256) = uint256_sub(allowance, assetAmount)
+        ERC20_allowances.write(owner=owner, spender=caller, value=newAllowance)
+        tempvar pedersen_ptr : HashBuiltin* = pedersen_ptr
+        tempvar range_check_ptr = range_check_ptr
+    else:
+        tempvar pedersen_ptr : HashBuiltin* = pedersen_ptr
+        tempvar range_check_ptr = range_check_ptr
+    end
     return (assetAmount)
 end
 
