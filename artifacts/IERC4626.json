@@ -284,6 +284,14 @@
                 "destination": "starkware.cairo.common.registers.get_fp_and_pc",
                 "type": "alias"
             },
+            "starkware.cairo.common.registers.get_ap": {
+                "destination": "starkware.cairo.lang.compiler.lib.registers.get_ap",
+                "type": "alias"
+            },
+            "starkware.cairo.common.registers.get_fp_and_pc": {
+                "destination": "starkware.cairo.lang.compiler.lib.registers.get_fp_and_pc",
+                "type": "alias"
+            },
             "starkware.cairo.common.uint256.ALL_ONES": {
                 "type": "const",
                 "value": 340282366920938463463374607431768211455
@@ -495,6 +503,10 @@
                 "type": "const",
                 "value": 1592190833581991703053805829594610833820054387
             },
+            "starkware.starknet.common.syscalls.GET_TX_INFO_SELECTOR": {
+                "type": "const",
+                "value": 1317029390204112103023
+            },
             "starkware.starknet.common.syscalls.GET_TX_SIGNATURE_SELECTOR": {
                 "type": "const",
                 "value": 1448089128652340074717162277007973
@@ -684,6 +696,43 @@
                 "size": 1,
                 "type": "struct"
             },
+            "starkware.starknet.common.syscalls.GetTxInfo": {
+                "full_name": "starkware.starknet.common.syscalls.GetTxInfo",
+                "members": {
+                    "request": {
+                        "cairo_type": "starkware.starknet.common.syscalls.GetTxInfoRequest",
+                        "offset": 0
+                    },
+                    "response": {
+                        "cairo_type": "starkware.starknet.common.syscalls.GetTxInfoResponse",
+                        "offset": 1
+                    }
+                },
+                "size": 2,
+                "type": "struct"
+            },
+            "starkware.starknet.common.syscalls.GetTxInfoRequest": {
+                "full_name": "starkware.starknet.common.syscalls.GetTxInfoRequest",
+                "members": {
+                    "selector": {
+                        "cairo_type": "felt",
+                        "offset": 0
+                    }
+                },
+                "size": 1,
+                "type": "struct"
+            },
+            "starkware.starknet.common.syscalls.GetTxInfoResponse": {
+                "full_name": "starkware.starknet.common.syscalls.GetTxInfoResponse",
+                "members": {
+                    "tx_info": {
+                        "cairo_type": "starkware.starknet.common.syscalls.TxInfo*",
+                        "offset": 0
+                    }
+                },
+                "size": 1,
+                "type": "struct"
+            },
             "starkware.starknet.common.syscalls.GetTxSignature": {
                 "full_name": "starkware.starknet.common.syscalls.GetTxSignature",
                 "members": {
@@ -818,6 +867,41 @@
                     }
                 },
                 "size": 3,
+                "type": "struct"
+            },
+            "starkware.starknet.common.syscalls.TxInfo": {
+                "full_name": "starkware.starknet.common.syscalls.TxInfo",
+                "members": {
+                    "account_contract_address": {
+                        "cairo_type": "felt",
+                        "offset": 1
+                    },
+                    "chain_id": {
+                        "cairo_type": "felt",
+                        "offset": 6
+                    },
+                    "max_fee": {
+                        "cairo_type": "felt",
+                        "offset": 2
+                    },
+                    "signature": {
+                        "cairo_type": "felt*",
+                        "offset": 4
+                    },
+                    "signature_len": {
+                        "cairo_type": "felt",
+                        "offset": 3
+                    },
+                    "transaction_hash": {
+                        "cairo_type": "felt",
+                        "offset": 5
+                    },
+                    "version": {
+                        "cairo_type": "felt",
+                        "offset": 0
+                    }
+                },
+                "size": 7,
                 "type": "struct"
             }
         },
