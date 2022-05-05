@@ -241,8 +241,6 @@ namespace ERC4626:
         let (caller) = get_caller_address()
         let (addr_this) = get_contract_address()
         ERC20_transferFrom(caller, addr_this, assetAmount)
-        let (oldTotalSupply) = ERC20_totalSupply()
-        let (newTotalSupply : Uint256, _) = uint256_add(oldTotalSupply, shareAmount)
         ERC20_mint(receiver, shareAmount)
         Deposit.emit(depositor=caller, receiver=receiver, assets=assetAmount, shares=shareAmount)
         return (assetAmount)
